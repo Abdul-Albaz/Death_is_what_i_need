@@ -15,7 +15,6 @@ public class GameManger : SINGLITON<GameManger>
     void Start()
     {
         
-
     }
 
     // Update is called once per frame

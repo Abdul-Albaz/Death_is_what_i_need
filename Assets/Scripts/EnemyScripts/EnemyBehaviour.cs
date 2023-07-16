@@ -22,6 +22,7 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] int enemyHealing;
     public int enemyDamg;
     public bool isTakingDamge;
+    bool[] healthLevel;
     // Start is called before the first frame update
     void Start()
     {
@@ -51,11 +52,12 @@ public class EnemyBehaviour : MonoBehaviour
                 anim.SetBool("Walk", false);
                 Invoke(nameof(attackAnimation),2f);
 
-                if (isAttacking && !player.GetComponent<PlayerMovement>().isParrying && player.GetComponent<PlayerCombatSystem>().playerHealth < 1000)
+                if (isAttacking && !player.GetComponent<PlayerMovement>().isParrying && GameManger.currentGameMode == GameManger.gameMode.reverse && player.GetComponent<PlayerCombatSystem>().playerHealth <= 600)
                 {      
                     if (Physics2D.OverlapCircle(new Vector2(effectPoint.position.x,effectPoint.position.y),effectRadius,playerMask))
                     {
                         player.GetComponent<PlayerCombatSystem>().playerHealth += enemyHealing;
+                        
                     }
                 }
                 
@@ -65,14 +67,18 @@ public class EnemyBehaviour : MonoBehaviour
                     {
                         Debug.Log("emey is damging player");
                         player.GetComponent<PlayerCombatSystem>().playerHealth -= enemyDamg;
+                        
                     }
-                    
+
+                    if (player.GetComponent<PlayerCombatSystem>().playerHealth <= 0)
+                    {
+
+                        player.gameObject.SetActive(false);
+                    }
+
                 }
 
-                if (player.GetComponent<PlayerCombatSystem>().playerHealth <=0)
-                {
-                    player.gameObject.SetActive(false);
-                }
+               
 
                 //if (!isAttacking)
                 //{

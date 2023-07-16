@@ -9,12 +9,12 @@ public class PlayerCombatSystem : MonoBehaviour
     public Transform effectPoint;
     public LayerMask enemyLayer;
     public int attackRange;
-    [SerializeField]int attackDamage = 10;
+    [SerializeField] int attackDamage = 10;
     private int parryDamage;
     PlayerMovement playermovement;
     GameObject Enemy;
-    
 
+    public bool[] healthLevels;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,19 +22,29 @@ public class PlayerCombatSystem : MonoBehaviour
         playermovement = gameObject.GetComponent<PlayerMovement>();
         anim = gameObject.GetComponent<Animator>();
         Enemy = GameObject.FindGameObjectWithTag("Enemy");
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Game Mode up" + GameManger.currentGameMode);
-
+        healthLevels[0] = (playerHealth <= 401) ? true : false;
+        healthLevels[1] = (playerHealth <= 201) ? true : false;
+        healthLevels[2] = (playerHealth <= 1) ? true : false;
+        UImanger.instance.healthIndicator[2].gameObject.SetActive(!healthLevels[0]);
+        UImanger.instance.healthIndicator[1].gameObject.SetActive(!healthLevels[1]);
+        UImanger.instance.healthIndicator[0].gameObject.SetActive(!healthLevels[2]);
+        
+        Debug.Log("health levels :  " + healthLevels[0]);
         if (playerHealth <= 200)
         {
-            
+
             GameManger.currentGameMode = GameManger.gameMode.normal;
+            UImanger.instance.modeIndicator.gameObject.SetActive(true);
         }
-        if(Input.GetKeyDown(KeyCode.E) && !playermovement.isAttacking){
+        if (Input.GetKeyDown(KeyCode.E) && !playermovement.isAttacking)
+        {
 
 
             Attack();
@@ -62,31 +72,29 @@ public class PlayerCombatSystem : MonoBehaviour
 
     }
 
-    void Attack() {
+    void Attack()
+    {
         anim.SetTrigger("Attack");
-        
+        Debug.Log("Game mode : " + GameManger.currentGameMode);
         if (playerHealth <= 200)
         {
             GameManger.currentGameMode = GameManger.gameMode.normal;
-            
+
         }
         //anim.SetTrigger("attack");
 
         Collider2D[] hitPoints = Physics2D.OverlapCircleAll(effectPoint.position, attackRange, enemyLayer);
-        
+
         foreach (Collider2D enemy in hitPoints)
         {
-            
-            Debug.Log("hit : "+ enemy.name);
+
+            Debug.Log("hit : " + enemy.name);
             if (GameManger.currentGameMode == GameManger.gameMode.reverse)
             {
-                if (enemy.GetComponent<EnemyBehaviour>().enemyHealth < 500)
-                {
-                    parryDamage = 200;
-                }
+
                 playerHealth -= attackDamage;
 
-                Debug.Log("Self damage player health : "+playerHealth);
+                Debug.Log("Self damage player health : " + playerHealth);
             }
             else if (GameManger.currentGameMode == GameManger.gameMode.normal)
             {
@@ -96,12 +104,13 @@ public class PlayerCombatSystem : MonoBehaviour
 
                 Debug.Log("Enemy damage");
             }
-            
+
         }
-        
+
     }
 
-    void Parry() {
+    void Parry()
+    {
 
         if (GameManger.currentGameMode == GameManger.gameMode.reverse)
         {
@@ -120,13 +129,18 @@ public class PlayerCombatSystem : MonoBehaviour
         {
             Enemy.GetComponent<EnemyBehaviour>().TakeDamage(0);
             anim.SetTrigger("Parry");
-            Debug.Log( "Game Mode "+GameManger.currentGameMode);
+            Debug.Log("Game Mode " + GameManger.currentGameMode);
         }
-       
-        
 
     }
 
+    private void OnDisable()
+    {
+        UImanger.instance.healthIndicator[0].gameObject.SetActive(false);
+    }
 
 
 }
+
+
+
