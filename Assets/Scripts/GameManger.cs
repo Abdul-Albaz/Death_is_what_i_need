@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManger : SINGLITON<GameManger>
 {
     public enum gameMode { normal, reverse }
-    public static gameMode currentGameMode;
+    [SerializeField]public static gameMode currentGameMode;
 
     private void Awake()
     {

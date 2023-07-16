@@ -21,7 +21,7 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] float effectRadius;
     [SerializeField] int enemyHealing;
     public int enemyDamg;
-
+    public bool isTakingDamge;
     // Start is called before the first frame update
     void Start()
     {
@@ -33,14 +33,13 @@ public class EnemyBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+       
         distance = Vector2.Distance(transform.position, player.position);
         
         if (distance <= followThreshold)
         {
             Debug.Log("kshaa");
             
-
             //if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Monster_Attack_animation"))
             //{
                 
@@ -51,16 +50,16 @@ public class EnemyBehaviour : MonoBehaviour
                 anim.SetBool("Attack", true);
                 anim.SetBool("Walk", false);
                 Invoke(nameof(attackAnimation),2f);
+
                 if (isAttacking && !player.GetComponent<PlayerMovement>().isParrying && player.GetComponent<PlayerCombatSystem>().playerHealth < 1000)
-                {
-                    
+                {      
                     if (Physics2D.OverlapCircle(new Vector2(effectPoint.position.x,effectPoint.position.y),effectRadius,playerMask))
                     {
                         player.GetComponent<PlayerCombatSystem>().playerHealth += enemyHealing;
                     }
                 }
                 
-                if (isAttacking  && player.GetComponent<PlayerCombatSystem>().playerHealth < 300)
+                if (isAttacking  && GameManger.currentGameMode == GameManger.gameMode.normal)
                 {
                     if (Physics2D.OverlapCircle(new Vector2(effectPoint.position.x, effectPoint.position.y), effectRadius, playerMask))
                     {
@@ -69,10 +68,19 @@ public class EnemyBehaviour : MonoBehaviour
                     }
                     
                 }
+
+                if (player.GetComponent<PlayerCombatSystem>().playerHealth <=0)
+                {
+                    player.gameObject.SetActive(false);
+                }
+
+                //if (!isAttacking)
+                //{
+                //    this.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                //}
             }
             else
-            {
-                
+            {   
                 transform.position = Vector2.MoveTowards(transform.position, new Vector2(player.position.x + offset, transform.position.y), Time.deltaTime * enimySpped);
                 anim.SetBool("Attack", false);
                 anim.SetBool("Walk", true);
@@ -85,30 +93,32 @@ public class EnemyBehaviour : MonoBehaviour
         }
         
 
-
-
-
-
-
     }
 
     public void TakeDamage(int damage) {
 
+        
         if (enemyHealth <= 0)
         {
             Debug.Log("Enemy Die");
             Die();
+
         }
-        else { enemyHealth -= damage; }
+
+        else {
+            GetComponent<SpriteRenderer>().color = new Color32(251, 157, 157, 255);
+            isTakingDamge = true;
+            enemyHealth -= damage;
+        }
         
         Debug.Log("EnemyHealth : " + enemyHealth);
-        
+        //this.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
     }
 
     public void Die()
     {
         Debug.Log("Enemy Die 2");
-        Destroy(gameObject);
+        gameObject.SetActive(false);
        // this.gameObject.GetComponent<SpriteRenderer>().color = Color.red;
     }
 

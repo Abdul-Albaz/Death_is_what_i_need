@@ -10,7 +10,7 @@ public class PlayerCombatSystem : MonoBehaviour
     public LayerMask enemyLayer;
     public int attackRange;
     [SerializeField]int attackDamage = 10;
-    [SerializeField]int parryDamage = 10;
+    private int parryDamage;
     PlayerMovement playermovement;
     GameObject Enemy;
     
@@ -18,7 +18,7 @@ public class PlayerCombatSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        parryDamage = 200;
         playermovement = gameObject.GetComponent<PlayerMovement>();
         anim = gameObject.GetComponent<Animator>();
         Enemy = GameObject.FindGameObjectWithTag("Enemy");
@@ -27,17 +27,39 @@ public class PlayerCombatSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      
-        if(Input.GetKey(KeyCode.E) && !playermovement.isAttacking){
+        Debug.Log("Game Mode up" + GameManger.currentGameMode);
+
+        if (playerHealth <= 200)
+        {
+            
+            GameManger.currentGameMode = GameManger.gameMode.normal;
+        }
+        if(Input.GetKeyDown(KeyCode.E) && !playermovement.isAttacking){
+
 
             Attack();
         }
+        else if (Input.GetKeyUp(KeyCode.E))
+        {
 
-        if (Input.GetKey(KeyCode.Q) && !playermovement.isParrying)
+            Enemy.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+
+
+
+        if (Input.GetKeyDown(KeyCode.Q) && !playermovement.isParrying)
         {
 
             Parry();
         }
+
+        else if (Input.GetKeyUp(KeyCode.Q))
+        {
+
+            Enemy.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+        }
+
+
     }
 
     void Attack() {
@@ -60,9 +82,10 @@ public class PlayerCombatSystem : MonoBehaviour
             {
                 if (enemy.GetComponent<EnemyBehaviour>().enemyHealth < 500)
                 {
-                    parryDamage = 500;
+                    parryDamage = 200;
                 }
                 playerHealth -= attackDamage;
+
                 Debug.Log("Self damage player health : "+playerHealth);
             }
             else if (GameManger.currentGameMode == GameManger.gameMode.normal)
@@ -70,6 +93,7 @@ public class PlayerCombatSystem : MonoBehaviour
                 parryDamage = 0;
                 enemy.GetComponent<EnemyBehaviour>().TakeDamage(attackDamage);
                 attackDamage = 500;
+
                 Debug.Log("Enemy damage");
             }
             
@@ -78,16 +102,27 @@ public class PlayerCombatSystem : MonoBehaviour
     }
 
     void Parry() {
-        if (Enemy.GetComponent<EnemyBehaviour>().isAttacking)
-        {
-            Enemy.GetComponent<EnemyBehaviour>().TakeDamage(parryDamage);
 
-            anim.SetTrigger("Parry");
+        if (GameManger.currentGameMode == GameManger.gameMode.reverse)
+        {
+            if (Enemy.GetComponent<EnemyBehaviour>().isAttacking)
+            {
+                Enemy.GetComponent<EnemyBehaviour>().TakeDamage(parryDamage);
+
+                anim.SetTrigger("Parry");
+            }
+            else
+            {
+                anim.SetTrigger("Parry");
+            }
         }
         else
         {
+            Enemy.GetComponent<EnemyBehaviour>().TakeDamage(0);
             anim.SetTrigger("Parry");
+            Debug.Log( "Game Mode "+GameManger.currentGameMode);
         }
+       
         
 
     }
