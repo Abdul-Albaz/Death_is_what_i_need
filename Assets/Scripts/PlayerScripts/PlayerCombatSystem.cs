@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerCombatSystem : MonoBehaviour
 {
-    int playerHealth;
+    public int playerHealth;
     Animator anim;
     public Transform effectPoint;
     public LayerMask enemyLayer;
@@ -18,7 +18,7 @@ public class PlayerCombatSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        playerHealth = gameObject.GetComponent<PlayerBehaviour>().health;
+        
         playermovement = gameObject.GetComponent<PlayerMovement>();
         anim = gameObject.GetComponent<Animator>();
         Enemy = GameObject.FindGameObjectWithTag("Enemy");

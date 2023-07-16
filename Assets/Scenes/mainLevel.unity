@@ -915,7 +915,6 @@ GameObject:
   - component: {fileID: 754401873}
   - component: {fileID: 754401878}
   - component: {fileID: 754401877}
-  - component: {fileID: 754401879}
   - component: {fileID: 754401881}
   - component: {fileID: 754401880}
   m_Layer: 7
@@ -1026,13 +1025,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9baef61d4f62b84d9e93b351f776c4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerHealth: 100
   effectPoint: {fileID: 629135786}
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
   attackRange: 5
   attackDamage: 300
-  parryDamage: 10
+  parryDamage: 500
 --- !u!114 &754401878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1046,22 +1046,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 0}
-  moveSpeed: 6
+  moveSpeed: 7
   isAttacking: 0
   isParrying: 0
---- !u!114 &754401879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 754401872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fda651ed6c5117846a64ffae7f3d59bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 1000
 --- !u!61 &754401880
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2026,8 +2013,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyHealth: 1000
-  attackThreshold: 5
-  followThreshold: 10
+  attackThreshold: 11
+  followThreshold: 20
   player: {fileID: 754401876}
   startPostion: {fileID: 0}
   offset: 5
@@ -2038,6 +2025,8 @@ MonoBehaviour:
     m_Bits: 128
   effectPoint: {fileID: 849641281}
   effectRadius: 0.2
+  enemyHealing: 20
+  enemyDamg: 100
 --- !u!95 &1652706729
 Animator:
   serializedVersion: 5
